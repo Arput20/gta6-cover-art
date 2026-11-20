@@ -1,5 +1,9 @@
-BRIEF.md
+node_modules/
+out/
+/tmp/
+tmp/
 recordings/
 *.webm
 *.mp4
 *.mov
+BRIEF.md
