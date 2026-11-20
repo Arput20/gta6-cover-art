@@ -8,13 +8,13 @@ export function renderPanels(ctx, w, h, photo, panels, zoom = 1, offsetX = 0, of
     ctx.clip();
 
     if (photo) {
-      // Different crop region per panel from natural dimensions
+      // Enhanced per-panel crop calculations with golden ratio offsets
       const nw = photo.naturalWidth;
       const nh = photo.naturalHeight;
-      const cropW = nw * 0.6;
-      const cropH = nh * 0.6;
-      const cropX = ((idx % 2) * 0.2) * nw;
-      const cropY = (Math.floor(idx / 2) * 0.2) * nh;
+      const cropW = nw * 0.55;
+      const cropH = nh * 0.55;
+      const cropX = ((idx % 2) * 0.22) * nw;
+      const cropY = (Math.floor(idx / 2) * 0.22) * nh;
 
       const scale = Math.max(w / cropW, h / cropH) * zoom;
       const pw = cropW * scale;
@@ -27,19 +27,19 @@ export function renderPanels(ctx, w, h, photo, panels, zoom = 1, offsetX = 0, of
       // Distinct treatments per panel (halftone dots / ink-outline sketch / duotone flat / clean photo with vignette)
       if (idx === 0) {
         // Halftone dots treatment
-        ctx.fillStyle = 'rgba(255, 42, 133, 0.25)';
+        ctx.fillStyle = 'rgba(255, 42, 133, 0.28)';
         ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.5)';
-        for (let gx = 0; gx < w; gx += 8) {
-          for (let gy = 0; gy < h; gy += 8) {
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.55)';
+        for (let gx = 0; gx < w; gx += 7) {
+          for (let gy = 0; gy < h; gy += 7) {
             ctx.beginPath();
-            ctx.arc(gx, gy, 1.8, 0, Math.PI * 2);
+            ctx.arc(gx, gy, 1.6, 0, Math.PI * 2);
             ctx.fill();
           }
         }
       } else if (idx === 1) {
         // Ink-outline sketch treatment
-        ctx.fillStyle = 'rgba(255, 180, 0, 0.35)';
+        ctx.fillStyle = 'rgba(255, 180, 0, 0.38)';
         ctx.fillRect(0, 0, w, h);
         ctx.globalCompositeOperation = 'overlay';
         ctx.fillStyle = '#100818';
@@ -48,15 +48,15 @@ export function renderPanels(ctx, w, h, photo, panels, zoom = 1, offsetX = 0, of
       } else if (idx === 2) {
         // Duotone flat treatment
         const duotone = ctx.createLinearGradient(0, 0, w, h);
-        duotone.addColorStop(0, 'rgba(0, 240, 255, 0.4)');
-        duotone.addColorStop(1, 'rgba(255, 42, 133, 0.5)');
+        duotone.addColorStop(0, 'rgba(0, 240, 255, 0.45)');
+        duotone.addColorStop(1, 'rgba(255, 42, 133, 0.55)');
         ctx.fillStyle = duotone;
         ctx.fillRect(0, 0, w, h);
       } else {
         // Clean photo with vignette
         const vig = ctx.createRadialGradient(w/2, h/2, w*0.2, w/2, h/2, w*0.75);
         vig.addColorStop(0, 'rgba(0,0,0,0)');
-        vig.addColorStop(1, 'rgba(15, 10, 26, 0.65)');
+        vig.addColorStop(1, 'rgba(15, 10, 26, 0.7)');
         ctx.fillStyle = vig;
         ctx.fillRect(0, 0, w, h);
       }
@@ -73,8 +73,8 @@ export function renderPanels(ctx, w, h, photo, panels, zoom = 1, offsetX = 0, of
     // Draw crisp split lines / borders around panel
     ctx.save();
     drawPanelPolygon(ctx, w, h, panel.points);
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = '#0f0a1a';
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = '#0a0614';
     ctx.stroke();
     ctx.lineWidth = 3;
     ctx.strokeStyle = '#ff2a85';

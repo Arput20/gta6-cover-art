@@ -40,7 +40,7 @@ export function initUI() {
   }
 
   function render(targetCtx = canvas.getContext('2d'), w = canvas.width, h = canvas.height) {
-    targetCtx.fillStyle = '#0f0a1a';
+    targetCtx.fillStyle = '#0a0614';
     targetCtx.fillRect(0, 0, w, h);
 
     if (!currentPhoto || !currentPhoto.complete || currentPhoto.naturalWidth === 0) {
@@ -60,9 +60,9 @@ export function initUI() {
     renderPanels(targetCtx, w, h, currentPhoto && currentPhoto.complete && currentPhoto.naturalWidth > 0 ? currentPhoto : null, currentLayout, zoomLevel, 0, 0);
     applyColourGrade(targetCtx, w, h, gradeIntensity, currentGrade);
 
-    // Bottom title band with slight skew
+    // Bottom title band with skew accent
     targetCtx.save();
-    targetCtx.fillStyle = 'rgba(15, 10, 26, 0.85)';
+    targetCtx.fillStyle = 'rgba(10, 6, 20, 0.9)';
     targetCtx.fillRect(0, h * 0.78, w, h * 0.22);
     targetCtx.fillStyle = '#00f0ff';
     targetCtx.fillRect(0, h * 0.78, w, 4);
@@ -76,13 +76,13 @@ export function initUI() {
     renderCaption(targetCtx, w, h, captionInput.value, {
       fontSize: h * 0.115,
       posY: h * 0.89,
-      letterSpacing: -1
+      letterSpacing: -1.5
     });
     targetCtx.restore();
 
     // Thin inner frame
     targetCtx.save();
-    targetCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    targetCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
     targetCtx.lineWidth = 6;
     targetCtx.strokeRect(12, 12, w - 24, h - 24);
     targetCtx.strokeStyle = '#00f0ff';
@@ -92,8 +92,8 @@ export function initUI() {
 
     // Film grain overlay
     targetCtx.save();
-    targetCtx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-    for (let i = 0; i < (w * h) / 120; i++) {
+    targetCtx.fillStyle = 'rgba(255, 255, 255, 0.045)';
+    for (let i = 0; i < (w * h) / 110; i++) {
       const gx = Math.random() * w;
       const gy = Math.random() * h;
       targetCtx.fillRect(gx, gy, 1.5, 1.5);
@@ -142,7 +142,7 @@ export function initUI() {
     if (!file) return;
     try {
       currentPhoto = await loadImage(URL.createObjectURL(file));
-      statusEl.textContent = 'Photo loaded successfully.';
+      statusEl.textContent = 'Custom photo loaded successfully.';
       redraw();
     } catch (err) {
       statusEl.textContent = 'Failed to load photo.';
@@ -160,18 +160,18 @@ export function initUI() {
   });
 
   exportSquareBtn.addEventListener('click', () => {
-    exportCoverImage(render, 1080, 1080, 'cover-1080x1080.png');
+    exportCoverImage(render, 1080, 1080, 'sunset-heist-1080x1080.png');
     statusEl.textContent = 'Exported 1080x1080 PNG';
   });
 
   exportStoryBtn.addEventListener('click', () => {
-    exportCoverImage(render, 1080, 1350, 'cover-1080x1350.png');
+    exportCoverImage(render, 1080, 1350, 'sunset-heist-1080x1350.png');
     statusEl.textContent = 'Exported 1080x1350 PNG';
   });
 
   exportLandscapeBtn.addEventListener('click', () => {
-    exportCoverImage(render, 1920, 1080, 'cover-1920x1080.png');
-    statusEl.textContent = 'Exported 1920x1080 PNG';
+    exportCoverImage(render, 1920, 1080, 'sunset-heist-1920x1080.png');
+    statusEl.textContent = 'Exported 1920x1080 Landscape PNG';
   });
 
   // Handle URL screenshot query / shots
@@ -188,7 +188,6 @@ export function initUI() {
       }
     });
   } else {
-    // Load demo by default
     loadImage('assets/demo-photo.jpg').then(img => {
       currentPhoto = img;
       redraw();

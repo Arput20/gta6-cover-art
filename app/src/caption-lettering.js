@@ -1,14 +1,14 @@
 // Renders bold condensed caption lettering with letter-spacing, shadows and outlines
 export function renderCaption(ctx, w, h, captionText, options = {}) {
   const {
-    fontSize = h * 0.11,
+    fontSize = h * 0.115,
     textColor = '#ffffff',
-    outlineColor = '#000000',
-    posY = h * 0.9,
-    letterSpacing = 2
+    outlineColor = '#0a0614',
+    posY = h * 0.89,
+    letterSpacing = -1.5
   } = options;
 
-  const text = (captionText || '').trim().toUpperCase();
+  const text = (captionText || 'SUNSET HEIST').trim().toUpperCase();
   if (!text) return;
 
   ctx.save();
@@ -16,7 +16,6 @@ export function renderCaption(ctx, w, h, captionText, options = {}) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
-  // Handle letter spacing via char measurement if needed or basic positioning
   const chars = text.split('');
   let totalWidth = 0;
   const metrics = chars.map(ch => {
@@ -25,15 +24,15 @@ export function renderCaption(ctx, w, h, captionText, options = {}) {
     totalWidth += width;
     return width;
   });
-  totalWidth -= letterSpacing; // remove trailing spacing
+  totalWidth -= letterSpacing;
 
   let startX = (w - totalWidth) / 2;
   
-  // Draw with outline and drop shadow
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-  ctx.shadowBlur = fontSize * 0.3;
-  ctx.shadowOffsetX = 4;
-  ctx.shadowOffsetY = 6;
+  // Enhanced drop shadow and glow
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+  ctx.shadowBlur = fontSize * 0.35;
+  ctx.shadowOffsetX = 5;
+  ctx.shadowOffsetY = 7;
 
   let currentX = startX;
   chars.forEach((ch, i) => {
@@ -41,7 +40,7 @@ export function renderCaption(ctx, w, h, captionText, options = {}) {
     const x = currentX + charWidth / 2;
     
     // Outline
-    ctx.lineWidth = fontSize * 0.12;
+    ctx.lineWidth = fontSize * 0.13;
     ctx.strokeStyle = outlineColor;
     ctx.strokeText(ch, x, posY);
 

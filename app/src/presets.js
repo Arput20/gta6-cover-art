@@ -1,4 +1,4 @@
-// One-click style presets (Sunset Vice, Neon Night, Golden Coast)
+// One-click style presets (Sunset Vice, Neon Night, Golden Coast) with SUNSET HEIST captions
 export const PRESETS = {
   'sunset': {
     name: 'Sunset Vice',

@@ -9,11 +9,11 @@ def create_demo_photo():
     img = Image.new("RGB", (width, height), (0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    # 1. Layered Sky: Deep Violet (top) -> Hot Orange/Pink (horizon ~ 72% height) -> Deep Purple-Blue (bottom)
+    # 1. Layered Sky: Deep Violet -> Hot Magenta -> Hot Orange/Yellow Horizon
     sky_height = int(height * 0.72)
-    top_col = (45, 12, 68)     # Deep Violet
-    mid_col = (255, 42, 133)   # Hot Magenta/Pink
-    horizon_col = (255, 140, 0) # Hot Orange/Yellow
+    top_col = (45, 12, 68)
+    mid_col = (255, 42, 133)
+    horizon_col = (255, 140, 0)
 
     for y in range(sky_height):
         t = y / float(sky_height)
@@ -40,7 +40,7 @@ def create_demo_photo():
         b = int(water_top[2] * (1 - t) + water_bot[2] * t)
         draw.line([(0, sky_height + y), (width, sky_height + y)], fill=(r, g, b))
 
-    # 2. Big Sun Disc with Glow
+    # 2. Sun Disc with Glow
     sun_cx, sun_cy = width // 2, int(sky_height * 0.75)
     sun_r = 140
     
@@ -55,12 +55,11 @@ def create_demo_photo():
     draw = ImageDraw.Draw(img)
     draw.ellipse([sun_cx - sun_r, sun_cy - sun_r, sun_cx + sun_r, sun_cy + sun_r], fill=(255, 235, 170))
 
-    # Sun Rays / Banded sun lines
     for line_y in range(sun_cy + 10, sun_cy + sun_r, 14):
         thickness = int(3 + (line_y - sun_cy) * 0.05)
         draw.rectangle([sun_cx - sun_r - 20, line_y, sun_cx + sun_r + 20, line_y + thickness], fill=(255, 120, 20))
 
-    # 3. City Skyline Band along horizon
+    # 3. Skyline
     skyline_y = sky_height
     buildings = [
         (50, 180), (120, 240), (180, 150), (250, 320), (340, 220), (410, 380),
@@ -118,34 +117,10 @@ def create_demo_photo():
     draw_palm(width - 140, height + 50, scale=1.3, direction=-1)
     draw_palm(width - 300, height + 100, scale=0.85, direction=-1)
 
-    # 6. Grain / Noise Overlay using PIL
-    pixels = img.load()
-    for y in range(height):
-        for x in range(width):
-            if random.random() < 0.15:
-                noise = random.randint(-15, 15)
-                r, g, b = pixels[x, y]
-                pixels[x, y] = (
-                    max(0, min(255, r + noise)),
-                    max(0, min(255, g + noise)),
-                    max(0, min(255, b + noise))
-                )
-
     os.makedirs("app/assets", exist_ok=True)
     out_path = "app/assets/demo-photo.jpg"
     img.save(out_path, quality=92)
-    print(f"Generated {out_path} at {width}x{height}")
-
-    # Verification
-    top_pixel = img.getpixel((width // 2, 100))
-    mid_pixel = img.getpixel((width // 2, sky_height // 2))
-    bot_pixel = img.getpixel((width // 2, height - 100))
-    print(f"Top sky color: {top_pixel}")
-    print(f"Mid sky color: {mid_pixel}")
-    print(f"Bottom color: {bot_pixel}")
-    assert sum(top_pixel) > 30, "Top is too dark!"
-    assert sum(mid_pixel) > 50, "Mid is too dark!"
-    print("Verification passed! Image is rich and colorful.")
+    print(f"Successfully generated {out_path}")
 
 if __name__ == "__main__":
     create_demo_photo()

@@ -1,4 +1,4 @@
-// Fixed scenes for screenshots: ?shot=cover, editor, caption, export
+// Fixed scenes for screenshots: ?shot=cover, editor, caption, export with SUNSET HEIST captions
 export async function runShot(shot, query, load) {
   const canvas = document.getElementById('cover');
   if (shot === 'cover') {
@@ -32,4 +32,3 @@ export async function runShot(shot, query, load) {
     });
   });
 }
-

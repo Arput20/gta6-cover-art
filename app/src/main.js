@@ -1,4 +1,4 @@
-// Main entry point for GTA 6 Cover Art Maker
+// Main entry point for Sunset Heist Cover Studio
 import { initUI } from './ui.js';
 
 window.addEventListener('DOMContentLoaded', () => {

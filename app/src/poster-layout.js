@@ -1,9 +1,9 @@
-// Computes and draws multi-panel poster layouts (3-5 angled panels)
+// Computes and draws multi-panel poster layouts (3-5 angled panels) with precision weights
 export const LAYOUTS = {
   '3-panel-split': [
-    { points: [[0,0], [0.65,0], [0.55,1], [0,1]], weight: 1 },
-    { points: [[0.68,0], [1,0], [1,0.65], [0.58,0.65]], weight: 0.6 },
-    { points: [[0.61,0.68], [1,0.68], [1,1], [0.55,1]], weight: 0.4 }
+    { points: [[0,0], [0.66,0], [0.54,1], [0,1]], weight: 1.1 },
+    { points: [[0.69,0], [1,0], [1,0.66], [0.57,0.66]], weight: 0.65 },
+    { points: [[0.60,0.69], [1,0.69], [1,1], [0.54,1]], weight: 0.45 }
   ],
   '4-panel-grid': [
     { points: [[0,0], [0.48,0], [0.45,0.52], [0,0.48]], weight: 0.5 },
@@ -12,12 +12,12 @@ export const LAYOUTS = {
     { points: [[0.55,0.52], [1,0.48], [1,1], [0.48,1]], weight: 0.5 }
   ],
   '3-panel-slant': [
-    { points: [[0,0], [0.38,0], [0.28,1], [0,1]], weight: 0.35 },
-    { points: [[0.41,0], [0.72,0], [0.62,1], [0.31,1]], weight: 0.35 },
-    { points: [[0.75,0], [1,0], [1,1], [0.65,1]], weight: 0.3 }
+    { points: [[0,0], [0.39,0], [0.27,1], [0,1]], weight: 0.38 },
+    { points: [[0.42,0], [0.73,0], [0.61,1], [0.30,1]], weight: 0.38 },
+    { points: [[0.76,0], [1,0], [1,1], [0.64,1]], weight: 0.32 }
   ],
   'single': [
-    { points: [[0,0], [1,0], [1,1], [0,1]], weight: 1 }
+    { points: [[0,0], [1,0], [1,1], [0,1]], weight: 1.0 }
   ]
 };
 
