@@ -21,8 +21,11 @@ export function initUI() {
   const exportStoryBtn = document.getElementById('export-story');
   const exportLandscapeBtn = document.getElementById('export-landscape');
 
-  let currentPhoto = null;
-  let currentLayout = LAYOUTS['3-panel-split'];
+  let currentPhoto = new Image();
+  currentPhoto.onload = () => redraw();
+  currentPhoto.src = 'assets/demo-photo.jpg';
+
+  let currentLayout = LAYOUTS['4-panel-grid'];
   let currentGrade = 'sunset';
   let gradeIntensity = 0.8;
   let zoomLevel = 1.0;
@@ -40,13 +43,62 @@ export function initUI() {
     targetCtx.fillStyle = '#0f0a1a';
     targetCtx.fillRect(0, 0, w, h);
 
-    renderPanels(targetCtx, w, h, currentPhoto, currentLayout, zoomLevel, 0, 0);
+    if (!currentPhoto || !currentPhoto.complete || currentPhoto.naturalWidth === 0) {
+      const skyGrad = targetCtx.createLinearGradient(0, 0, 0, h * 0.72);
+      skyGrad.addColorStop(0, '#2d0c44');
+      skyGrad.addColorStop(0.5, '#ff2a85');
+      skyGrad.addColorStop(1, '#ff8c00');
+      targetCtx.fillStyle = skyGrad;
+      targetCtx.fillRect(0, 0, w, h * 0.72);
+
+      targetCtx.fillStyle = '#ffebaa';
+      targetCtx.beginPath();
+      targetCtx.arc(w / 2, h * 0.35, h * 0.15, 0, Math.PI * 2);
+      targetCtx.fill();
+    }
+
+    renderPanels(targetCtx, w, h, currentPhoto && currentPhoto.complete && currentPhoto.naturalWidth > 0 ? currentPhoto : null, currentLayout, zoomLevel, 0, 0);
     applyColourGrade(targetCtx, w, h, gradeIntensity, currentGrade);
+
+    // Bottom title band with slight skew
+    targetCtx.save();
+    targetCtx.fillStyle = 'rgba(15, 10, 26, 0.85)';
+    targetCtx.fillRect(0, h * 0.78, w, h * 0.22);
+    targetCtx.fillStyle = '#00f0ff';
+    targetCtx.fillRect(0, h * 0.78, w, 4);
+    targetCtx.fillStyle = '#ff2a85';
+    targetCtx.fillRect(0, h * 0.78 + 4, w, 2);
+    targetCtx.restore();
+
+    // Render caption with slight skew and tight tracking
+    targetCtx.save();
+    targetCtx.transform(1, 0, -0.04, 1, 0, 0);
     renderCaption(targetCtx, w, h, captionInput.value, {
-      fontSize: h * 0.11,
-      posY: h * 0.9,
-      letterSpacing: 2
+      fontSize: h * 0.115,
+      posY: h * 0.89,
+      letterSpacing: -1
     });
+    targetCtx.restore();
+
+    // Thin inner frame
+    targetCtx.save();
+    targetCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    targetCtx.lineWidth = 6;
+    targetCtx.strokeRect(12, 12, w - 24, h - 24);
+    targetCtx.strokeStyle = '#00f0ff';
+    targetCtx.lineWidth = 2;
+    targetCtx.strokeRect(16, 16, w - 32, h - 32);
+    targetCtx.restore();
+
+    // Film grain overlay
+    targetCtx.save();
+    targetCtx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+    for (let i = 0; i < (w * h) / 120; i++) {
+      const gx = Math.random() * w;
+      const gy = Math.random() * h;
+      targetCtx.fillRect(gx, gy, 1.5, 1.5);
+    }
+    targetCtx.restore();
   }
 
   function redraw() {

@@ -10,12 +10,12 @@ export async function runShot(shot, query, load) {
   } else if (shot === 'editor') {
     document.body.classList.add('shot-editor');
     const layoutSelect = document.getElementById('layout-select');
-    if (layoutSelect) layoutSelect.value = '3-panel-split';
+    if (layoutSelect) layoutSelect.value = '4-panel-grid';
   } else if (shot === 'caption') {
     document.body.classList.add('shot-caption');
     const captionInput = document.getElementById('caption');
     if (captionInput) {
-      captionInput.value = 'VICE CITY 2026';
+      captionInput.value = 'SUNSET HEIST';
     }
   } else if (shot === 'export') {
     document.body.classList.add('shot-export');
@@ -25,7 +25,7 @@ export async function runShot(shot, query, load) {
       exportBtn.style.boxShadow = '0 0 15px rgba(0,240,255,0.6)';
     }
   }
-  await load(`assets/demo-photo.jpg`, query.get('caption') ?? (shot === 'caption' ? 'VICE CITY 2026' : 'VICE CITY STORIES'));
+  await load(`assets/demo-photo.jpg`, query.get('caption') ?? 'SUNSET HEIST');
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       window.__shotReady = true;

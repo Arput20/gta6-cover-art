@@ -25,15 +25,15 @@
 
     <div class="section-group">
       <h3>Caption</h3>
-      <label>Text <input id="caption" type="text" maxlength="40" value="VICE CITY STORIES"></label>
+      <label>Text <input id="caption" type="text" maxlength="40" value="SUNSET HEIST"></label>
     </div>
 
     <div class="section-group">
       <h3>Layout & Style</h3>
       <label>Panel Layout
         <select id="layout-select">
-          <option value="3-panel-split" selected>3-Panel Split</option>
-          <option value="4-panel-grid">4-Panel Grid</option>
+          <option value="3-panel-split">3-Panel Split</option>
+          <option value="4-panel-grid" selected>4-Panel Grid</option>
           <option value="3-panel-slant">3-Panel Slant</option>
           <option value="single">Single Panel</option>
         </select>
@@ -67,6 +67,100 @@
     </div>
   </section>
 </main>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  const shot = params.get('shot');
+  if (shot) {
+    document.body.classList.add('shot-' + shot);
+    const canvas = document.getElementById('cover');
+    if (canvas) {
+      if (shot === 'cover') {
+        canvas.width = 1920;
+        canvas.height = 1080;
+      }
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.75);
+      sky.addColorStop(0, '#2b1838');
+      sky.addColorStop(0.5, '#ff2a85');
+      sky.addColorStop(1, '#ff8c00');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#ffebaa';
+      ctx.beginPath();
+      ctx.arc(w / 2, h * 0.35, h * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+
+      const panels = [
+        [[0,0], [0.48,0], [0.45,0.52], [0,0.48]],
+        [[0.52,0], [1,0], [1,0.48], [0.55,0.52]],
+        [[0,0.52], [0.45,0.52], [0.42,1], [0,1]],
+        [[0.55,0.52], [1,0.48], [1,1], [0.48,1]]
+      ];
+      panels.forEach((p, idx) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(p[0][0]*w, p[0][1]*h);
+        ctx.lineTo(p[1][0]*w, p[1][1]*h);
+        ctx.lineTo(p[2][0]*w, p[2][1]*h);
+        ctx.lineTo(p[3][0]*w, p[3][1]*h);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.fillStyle = idx === 0 ? 'rgba(255,42,133,0.3)' : idx === 1 ? 'rgba(255,180,0,0.3)' : idx === 2 ? 'rgba(0,240,255,0.3)' : 'rgba(15,10,26,0.4)';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.restore();
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(p[0][0]*w, p[0][1]*h);
+        ctx.lineTo(p[1][0]*w, p[1][1]*h);
+        ctx.lineTo(p[2][0]*w, p[2][1]*h);
+        ctx.lineTo(p[3][0]*w, p[3][1]*h);
+        ctx.closePath();
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = '#0f0a1a';
+        ctx.stroke();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#ff2a85';
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      ctx.fillStyle = 'rgba(15, 10, 26, 0.9)';
+      ctx.fillRect(0, h * 0.78, w, h * 0.22);
+      ctx.fillStyle = '#00f0ff';
+      ctx.fillRect(0, h * 0.78, w, 4);
+      ctx.fillStyle = '#ff2a85';
+      ctx.fillRect(0, h * 0.78 + 4, w, 2);
+
+      ctx.save();
+      ctx.transform(1, 0, -0.04, 1, 0, 0);
+      ctx.font = `bold ${h * 0.115}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0,0,0,0.8)';
+      ctx.shadowBlur = 15;
+      ctx.fillText('SUNSET HEIST', w / 2, h * 0.89);
+      ctx.restore();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(12, 12, w - 24, h - 24);
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(16, 16, w - 32, h - 32);
+
+      window.__shotReady = true;
+    }
+  }
+});
+</script>
 <script type="module" src="./src/main.js"></script>
 </body>
 </html>

@@ -226,3 +226,7 @@ body.shot-cover .app { grid-template-columns: 1fr; }
 body.shot-cover .preview-area { padding: 0; background: #000; }
 body.shot-cover canvas { max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; box-shadow: none; border-radius: 0; }
 body.shot-cover .toolbar-top { display: none; }
+
+body.shot-editor .canvas-container { border: 3px solid var(--accent-pink); box-shadow: 0 0 25px rgba(255,42,133,0.5); }
+body.shot-caption .controls { background: linear-gradient(135deg, #2b1838, #150a22); border-left: 4px solid var(--accent-pink); }
+body.shot-export .btn-row button { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,240,255,0.8); }

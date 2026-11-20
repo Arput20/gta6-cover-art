@@ -4,15 +4,15 @@ export const PRESETS = {
     name: 'Sunset Vice',
     gradePreset: 'sunset',
     intensity: 0.8,
-    layout: '3-panel-split',
-    caption: 'WELCOME TO VICE CITY'
+    layout: '4-panel-grid',
+    caption: 'SUNSET HEIST'
   },
   'neon': {
     name: 'Neon Night',
     gradePreset: 'neon',
     intensity: 0.85,
     layout: '4-panel-grid',
-    caption: 'PARADISE LOST'
+    caption: 'SUNSET HEIST'
   },
   'coast': {
     name: 'Golden Coast',
