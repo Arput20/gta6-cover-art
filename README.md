@@ -2,21 +2,15 @@
 [![rank](https://make.fun/badge/gta6-cover-art-01/Arput20/gta6-cover-art/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard)
 [![reward](https://make.fun/badge/gta6-cover-art-01/Arput20/gta6-cover-art/reward.svg)](https://make.fun/bounty/gta6-cover-art-01)
 
-# Sunset Heist Cover Studio
+# Cover Studio (GTA-Style Cover Art Maker)
 
-An ultra-polished web application for crafting high-impact poster artwork and narrative cover designs. Built with zero-dependency modern JavaScript modules, Canvas 2D graphics pipeline, multi-panel perspective cropping, cinematic color grading presets (Sunset Neon, Midnight Noir, Tropical Heat, Golden Hour), custom Anton font lettering, interactive drag-and-drop framing, and multi-resolution PNG export.
+Cover Studio is an offline, zero-dependency multi-panel GTA-style cover art generator built with pure Canvas 2D and ES modules. It allows users to combine multi-panel layouts, per-panel zoom and framing, sunset duotone colour grading, halftone dot patterns, film grain, and bold typography with tight tracking and outline effects into stunning retro-futuristic cover art.
 
-## Key Features
+## How to Run
 
-- **Dynamic Panel Matrix**: Seamlessly compose 3 to 6 angled photographic panels with intuitive interactive cropping and aspect locking.
-- **Cinematic Colour Pipeline**: Fine-tune contrast, saturation, neon bloom, vignettes, and duotone gradient mapping.
-- **Bold Lettering Engine**: Custom Anton font typography with customizable header, tagline, and footer captions featuring "SUNSET HEIST".
-- **Instant Export Suite**: High-resolution PNG rendering across square (1080x1080), portrait (1080x1350), and cinematic widescreen (1920x1080) dimensions.
-
-## Quick Start
-
-1. Start the local server:
-   ```bash
-   npx ts-node serve.ts
-   ```
-2. Open `http://localhost:8099` in your browser.
+To run the app locally:
+```bash
+cd app
+python3 -m http.server 8099
+```
+Then open `http://localhost:8099` in your browser.

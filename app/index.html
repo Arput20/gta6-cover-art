@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cover Studio - GTA-Style Cover Art Maker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Controls -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>COVER STUDIO</h1>
+        <p>GTA-STYLE MULTI-PANEL POSTER MAKER</p>
+      </div>
+
+      <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="preview">Studio</button>
+        <button class="tab-btn" data-tab="layout">Layout</button>
+        <button class="tab-btn" data-tab="caption">Caption</button>
+        <button class="tab-btn" data-tab="export">Export</button>
+      </nav>
+
+      <div class="sidebar-content">
+        <!-- Preview / Source Tab -->
+        <div class="tab-pane active" id="pane-preview">
+          <div class="control-group">
+            <label>Source Photo</label>
+            <div class="drop-zone" id="drop-zone">
+              <p>Click or Drop Photo Here</p>
+              <input type="file" id="file-input" accept="image/*" style="display:none;">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Panel Zoom</label>
+            <input type="range" id="zoom-slider" class="slider" min="0.5" max="3.0" step="0.05" value="1.0">
+          </div>
+
+          <div class="control-group">
+            <label>Color Presets</label>
+            <div class="preset-grid">
+              <button class="preset-btn active" data-preset="sunsetVice">Sunset Vice</button>
+              <button class="preset-btn" data-preset="neonNight">Neon Night</button>
+              <button class="preset-btn" data-preset="goldenCoast">Golden Coast</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout Tab -->
+        <div class="tab-pane" id="pane-layout">
+          <div class="control-group">
+            <label>Poster Layout Template</label>
+            <div class="layout-grid">
+              <button class="layout-card active" data-layout="grid4">4-Panel Grid</button>
+              <button class="layout-card" data-layout="trio">Dynamic Trio</button>
+              <button class="layout-card" data-layout="solo">Hero Single</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Caption Tab -->
+        <div class="tab-pane" id="pane-caption">
+          <div class="control-group">
+            <label>Title Caption (Must be SUNSET HEIST)</label>
+            <input type="text" id="caption-input" class="text-input" value="SUNSET HEIST" maxlength="24">
+          </div>
+        </div>
+
+        <!-- Export Tab -->
+        <div class="tab-pane" id="pane-export">
+          <div class="control-group">
+            <label>Export Resolution</label>
+            <div class="export-btn-grid">
+              <button class="export-btn" data-w="1080" data-h="1080">Export Square (1080x1080)</button>
+              <button class="export-btn" data-w="1080" data-h="1350">Export Portrait (1080x1350)</button>
+              <button class="export-btn" data-w="1920" data-h="1080">Export Widescreen (1920x1080)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Canvas Preview Area -->
+    <main class="preview-area">
+      <div class="canvas-wrapper">
+        <canvas id="poster-canvas" width="1200" height="1200"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

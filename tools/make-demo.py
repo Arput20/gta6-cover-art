@@ -1,126 +1,130 @@
-#!/usr/bin/env python3
-import math
-import random
 import os
 from PIL import Image, ImageDraw, ImageFilter
+import random
 
-def create_demo_photo():
+def make_demo():
     width, height = 1600, 1200
-    img = Image.new("RGB", (width, height), (0, 0, 0))
+    img = Image.new("RGB", (width, height), (20, 10, 40))
     draw = ImageDraw.Draw(img)
 
-    # 1. Layered Sky: Deep Violet -> Hot Magenta -> Hot Orange/Yellow Horizon
-    sky_height = int(height * 0.72)
-    top_col = (45, 12, 68)
-    mid_col = (255, 42, 133)
-    horizon_col = (255, 140, 0)
-
-    for y in range(sky_height):
-        t = y / float(sky_height)
-        if t < 0.5:
-            factor = t / 0.5
-            r = int(top_col[0] * (1 - factor) + mid_col[0] * factor)
-            g = int(top_col[1] * (1 - factor) + mid_col[1] * factor)
-            b = int(top_col[2] * (1 - factor) + mid_col[2] * factor)
+    # 1. Sunset gradient sky (deep violet / purple at top to hot orange / magenta at bottom)
+    for y in range(height):
+        factor = y / height
+        # lerp colors: (25, 10, 50) -> (120, 30, 80) -> (230, 90, 40) -> (250, 180, 80)
+        if factor < 0.4:
+            t = factor / 0.4
+            r = int(25 + t * (100 - 25))
+            g = int(10 + t * (25 - 10))
+            b = int(50 + t * (90 - 50))
+        elif factor < 0.75:
+            t = (factor - 0.4) / 0.35
+            r = int(100 + t * (220 - 100))
+            g = int(25 + t * (80 - 25))
+            b = int(90 + t * (30 - 90))
         else:
-            factor = (t - 0.5) / 0.5
-            r = int(mid_col[0] * (1 - factor) + horizon_col[0] * factor)
-            g = int(mid_col[1] * (1 - factor) + horizon_col[1] * factor)
-            b = int(mid_col[2] * (1 - factor) + horizon_col[2] * factor)
+            t = (factor - 0.75) / 0.25
+            r = int(220 + t * (255 - 220))
+            g = int(80 + t * (160 - 80))
+            b = int(30 + t * (60 - 30))
         draw.line([(0, y), (width, y)], fill=(r, g, b))
 
-    # Water / Lower gradient
-    water_height = height - sky_height
-    water_top = (120, 30, 80)
-    water_bot = (20, 10, 35)
-    for y in range(water_height):
-        t = y / float(water_height)
-        r = int(water_top[0] * (1 - t) + water_bot[0] * t)
-        g = int(water_top[1] * (1 - t) + water_bot[1] * t)
-        b = int(water_top[2] * (1 - t) + water_bot[2] * t)
-        draw.line([(0, sky_height + y), (width, sky_height + y)], fill=(r, g, b))
+    # 2. Big sun disc with glow
+    sun_center = (width // 2, int(height * 0.48))
+    sun_radius = 220
+    # Glow / rays
+    for r in range(sun_radius + 180, sun_radius, -15):
+        alpha_factor = (1.0 - (r - sun_radius) / 180.0) * 80
+        glow_color = (255, int(150 + 80 * alpha_factor/80), int(50 * alpha_factor/80))
+        draw.ellipse([sun_center[0] - r, sun_center[1] - r, sun_center[0] + r, sun_center[1] + r], fill=(250, 140, 40))
 
-    # 2. Sun Disc with Glow
-    sun_cx, sun_cy = width // 2, int(sky_height * 0.75)
-    sun_r = 140
-    
-    glow_img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    glow_draw = ImageDraw.Draw(glow_img)
-    for r in range(sun_r + 120, sun_r, -5):
-        alpha = int(255 * (1 - (r - sun_r) / 120.0) * 0.4)
-        glow_draw.ellipse([sun_cx - r, sun_cy - r, sun_cx + r, sun_cy + r], fill=(255, 180, 50, alpha))
-    glow_img = glow_img.filter(ImageFilter.GaussianBlur(15))
-    img.paste(glow_img, (0, 0), glow_img)
+    # Sun bright core
+    draw.ellipse([sun_center[0] - sun_radius, sun_center[1] - sun_radius, 
+                  sun_center[0] + sun_radius, sun_center[1] + sun_radius], fill=(255, 235, 120))
 
-    draw = ImageDraw.Draw(img)
-    draw.ellipse([sun_cx - sun_r, sun_cy - sun_r, sun_cx + sun_r, sun_cy + sun_r], fill=(255, 235, 170))
+    # Horizontal scanlines across the sun for retro aesthetic
+    for sy in range(sun_center[1] - sun_radius, sun_center[1] + sun_radius, 12):
+        draw.rectangle([sun_center[0] - sun_radius - 20, sy, sun_center[0] + sun_radius + 20, sy + 4], fill=(180, 50, 40))
 
-    for line_y in range(sun_cy + 10, sun_cy + sun_r, 14):
-        thickness = int(3 + (line_y - sun_cy) * 0.05)
-        draw.rectangle([sun_cx - sun_r - 20, line_y, sun_cx + sun_r + 20, line_y + thickness], fill=(255, 120, 20))
-
-    # 3. Skyline
-    skyline_y = sky_height
-    buildings = [
-        (50, 180), (120, 240), (180, 150), (250, 320), (340, 220), (410, 380),
-        (500, 200), (580, 450), (670, 280), (740, 390), (830, 260), (910, 420),
-        (1000, 310), (1090, 230), (1170, 360), (1260, 210), (1340, 340), (1430, 190), (1510, 270)
-    ]
-    for bx, bh in buildings:
-        bw = random.randint(50, 90)
-        draw.rectangle([bx, skyline_y - bh, bx + bw, skyline_y], fill=(15, 8, 25))
-        for wy in range(skyline_y - bh + 20, skyline_y - 20, 25):
-            for wx in range(bx + 8, bx + bw - 12, 16):
+    # 3. City skyline band
+    skyline_y = int(height * 0.65)
+    draw.rectangle([0, skyline_y, width, height], fill=(15, 8, 30))
+    # Add some building shapes
+    building_colors = [(20, 10, 35), (30, 15, 50), (10, 5, 25)]
+    bx = 0
+    random.seed(42)
+    while bx < width:
+        bw = random.randint(40, 110)
+        bh = random.randint(80, 250)
+        by = skyline_y - bh
+        color = building_colors[random.randint(0, len(building_colors) - 1)]
+        draw.rectangle([bx, by, bx + bw, height], fill=color)
+        # Windows
+        for wy in range(by + 15, skyline_y - 10, 20):
+            for wx in range(bx + 10, bx + bw - 10, 15):
                 if random.random() > 0.4:
-                    win_col = (255, 220, 100) if random.random() > 0.3 else (0, 240, 255)
-                    draw.rectangle([wx, wy, wx + 6, wy + 10], fill=win_col)
+                    draw.rectangle([wx, wy, wx + 6, wy + 10], fill=(255, 220, 120))
+        bx += bw - random.randint(0, 15)
 
-    # 4. Foreground Figure Silhouette
-    fig_cx = int(width * 0.52)
-    fig_base = height - 80
-    draw.ellipse([fig_cx - 35, fig_base - 380, fig_cx + 35, fig_base - 310], fill=(10, 5, 18))
-    draw.polygon([
-        (fig_cx - 90, fig_base - 300),
-        (fig_cx + 90, fig_base - 300),
-        (fig_cx + 110, fig_base - 180),
-        (fig_cx + 70, fig_base),
-        (fig_cx - 70, fig_base),
-        (fig_cx - 110, fig_base - 180)
-    ], fill=(10, 5, 18))
-
-    # 5. Palm Trees
-    def draw_palm(x, base_y, scale=1.0, direction=1):
-        trunk_pts = []
-        for i in range(25):
-            t = i / 24.0
-            tx = x + direction * math.sin(t * math.pi * 0.5) * 80 * scale
-            ty = base_y - t * 500 * scale
-            trunk_pts.append((tx, ty))
-        
+    # 4. Palm silhouettes on both sides
+    def draw_palm(base_x, base_y, scale=1.0):
+        trunk_pts = [
+            (base_x, base_y),
+            (base_x + 10 * scale, base_y - 200 * scale),
+            (base_x + 35 * scale, base_y - 450 * scale),
+            (base_x + 70 * scale, base_y - 700 * scale)
+        ]
+        # Draw trunk curve or lines
         for i in range(len(trunk_pts) - 1):
-            w_start = int((28 - i * 0.8) * scale)
-            draw.line([trunk_pts[i], trunk_pts[i+1]], fill=(12, 6, 20), width=max(4, w_start))
+            draw.line([trunk_pts[i], trunk_pts[i+1]], fill=(10, 5, 20), width=int(24 * scale))
+        
+        # Fronds
+        top = trunk_pts[-1]
+        for angle_offset in [-1.2, -0.8, -0.4, 0.0, 0.4, 0.8, 1.2]:
+            fx = top[0] + math.cos(angle_offset) * 220 * scale
+            fy = top[1] + math.sin(angle_offset) * 120 * scale - 40
+            # Draw frond arc
+            draw.arc([top[0] - 220 * scale, top[1] - 220 * scale, top[0] + 220 * scale, top[1] + 120 * scale], 
+                     start=0, end=180, fill=(10, 5, 20), width=int(12 * scale))
 
-        top_x, top_y = trunk_pts[-1]
-        num_fronds = 9
-        for f in range(num_fronds):
-            angle = (f / float(num_fronds - 1) - 0.5) * math.pi * 0.85 - (0.2 if direction < 0 else -0.2)
-            length = random.randint(180, 260) * scale
-            fx = top_x + math.cos(angle) * length
-            fy = top_y + math.sin(angle) * length * 0.7
-            mid_x = (top_x + fx) / 2 + (15 if direction > 0 else -15)
-            mid_y = min(top_y, fy) - 40 * scale
-            draw.line([(top_x, top_y), (mid_x, mid_y), (fx, fy)], fill=(12, 6, 20), width=int(6 * scale))
+    import math
+    draw_palm(150, height, 1.2)
+    draw_palm(80, height + 50, 1.5)
+    draw_palm(width - 180, height, 1.1)
+    draw_palm(width - 100, height + 30, 1.4)
 
-    draw_palm(120, height + 50, scale=1.25, direction=1)
-    draw_palm(280, height + 100, scale=0.9, direction=1)
-    draw_palm(width - 140, height + 50, scale=1.3, direction=-1)
-    draw_palm(width - 300, height + 100, scale=0.85, direction=-1)
+    # 5. One foreground figure silhouette (e.g., gangster with hat / jacket holding a briefcase or leaning)
+    fig_x, fig_y = int(width * 0.72), int(height * 0.75)
+    # Body / trench coat
+    draw.polygon([
+        (fig_x - 50, fig_y + 300),
+        (fig_x - 30, fig_y + 100),
+        (fig_x + 40, fig_y + 100),
+        (fig_x + 60, fig_y + 300)
+    ], fill=(5, 2, 10))
+    # Shoulders / arms
+    draw.rectangle([fig_x - 65, fig_y + 90, fig_x + 55, fig_y + 160], fill=(5, 2, 10))
+    # Head & fedora hat
+    draw.ellipse([fig_x - 25, fig_y + 20, fig_x + 25, fig_y + 85], fill=(5, 2, 10))
+    # Fedora brim
+    draw.ellipse([fig_x - 45, fig_y + 35, fig_x + 45, fig_y + 50], fill=(5, 2, 10))
+
+    # 6. Film grain / noise overlay
+    pixels = img.load()
+    for y in range(height):
+        for x in range(width):
+            if (x + y * 7) % 11 == 0:
+                noise = random.randint(-25, 25)
+                r, g, b = pixels[x, y]
+                pixels[x, y] = (
+                    max(0, min(255, r + noise)),
+                    max(0, min(255, g + noise)),
+                    max(0, min(255, b + noise))
+                )
 
     os.makedirs("app/assets", exist_ok=True)
-    out_path = "app/assets/demo-photo.jpg"
-    img.save(out_path, quality=92)
-    print(f"Successfully generated {out_path}")
+    output_path = "app/assets/demo-photo.jpg"
+    img.save(output_path, "JPEG", quality=90)
+    print(f"Generated demo photo at {output_path}")
 
 if __name__ == "__main__":
-    create_demo_photo()
+    make_demo()
