@@ -1,6 +1,6 @@
 // main.js: Wiring up Cover Studio
 
-import { LAYOUTS, drawPanelBorder } from './poster-layout.js';
+import { LAYOUTS, drawPanelBorder, drawPanelLabel } from './poster-layout.js';
 import { drawCroppedImage } from './panel-crop.js';
 import { applyColorGrading } from './colour-grade.js';
 import { drawCaption } from './caption-lettering.js';
@@ -10,7 +10,7 @@ import { setupUI } from './ui.js';
 import { handleShotParam } from './shots.js';
 
 const appState = {
-  layout: 'grid4',
+  layout: 'keyArt',
   preset: 'sunsetVice',
   caption: 'SUNSET HEIST',
   activeTab: 'preview',
@@ -20,7 +20,8 @@ const appState = {
     0: { zoom: 1.0, offsetX: 0, offsetY: 0 },
     1: { zoom: 1.0, offsetX: 0, offsetY: 0 },
     2: { zoom: 1.0, offsetX: 0, offsetY: 0 },
-    3: { zoom: 1.0, offsetX: 0, offsetY: 0 }
+    3: { zoom: 1.0, offsetX: 0, offsetY: 0 },
+    4: { zoom: 1.0, offsetX: 0, offsetY: 0 }
   },
   onExport: (w, h) => {
     const canvas = document.getElementById('poster-canvas');
@@ -40,7 +41,7 @@ function render() {
   ctx.fillRect(0, 0, width, height);
 
   // Get layout panels
-  const layoutDef = LAYOUTS[appState.layout] || LAYOUTS.grid4;
+  const layoutDef = LAYOUTS[appState.layout] || LAYOUTS.keyArt;
   const presetDef = PRESETS[appState.preset] || PRESETS.sunsetVice;
 
   // Draw panels
@@ -61,16 +62,20 @@ function render() {
     }
 
     drawPanelBorder(ctx, panel.x, panel.y, panel.w, panel.h, pDef.angle);
+
+    if (pDef.label) {
+      drawPanelLabel(ctx, panel.x, panel.y, panel.w, panel.h, pDef.label);
+    }
   });
 
   // Apply color grading & effects
   applyColorGrading(ctx, width, height, presetDef);
 
-  // Draw title banner / caption
+  // Draw title banner / caption / top strip / credits
   drawCaption(ctx, width, height, appState.caption, {
-    fontSize: Math.round(width * 0.13),
-    x: width * 0.07,
-    y: height * 0.90
+    fontSize: Math.round(width * 0.11),
+    x: width * 0.05,
+    y: height * 0.70
   });
 }
 
