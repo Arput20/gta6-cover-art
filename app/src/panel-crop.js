@@ -2,12 +2,16 @@
 
 export function drawCroppedImage(ctx, img, panel, transform) {
   if (!img) return;
-  const { x, y, w, h } = panel;
+  const { x, y, w, h, angle } = panel;
   const zoom = transform.zoom || 1.0;
   const offsetX = transform.offsetX || 0; // -1 to 1
   const offsetY = transform.offsetY || 0;
 
   ctx.save();
+  ctx.translate(x + w / 2, y + h / 2);
+  if (angle) ctx.rotate(angle);
+  ctx.translate(-(x + w / 2), -(y + h / 2));
+
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();

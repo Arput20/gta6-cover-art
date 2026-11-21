@@ -38,28 +38,42 @@ export const LAYOUTS = {
 
 export function drawPanelBorder(ctx, x, y, w, h, angle) {
   ctx.save();
+  ctx.translate(x + w / 2, y + h / 2);
+  if (angle) ctx.rotate(angle);
+  ctx.translate(-(x + w / 2), -(y + h / 2));
+
+  // Warm cream double border
   ctx.strokeStyle = '#e8c08a';
   ctx.lineWidth = 5;
-  ctx.shadowColor = 'rgba(0,0,0,0.7)';
-  ctx.shadowBlur = 10;
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 12;
   ctx.strokeRect(x, y, w, h);
+
+  ctx.strokeStyle = '#1a0c2e';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x + 4, y + 4, w - 8, h - 8);
+
   ctx.restore();
 }
 
-export function drawPanelLabel(ctx, x, y, w, h, label) {
+export function drawPanelLabel(ctx, x, y, w, h, angle, label) {
   if (!label) return;
   ctx.save();
-  ctx.font = '700 12px Impact, Arial Black, sans-serif';
-  const padX = 8;
+  ctx.translate(x + w / 2, y + h / 2);
+  if (angle) ctx.rotate(angle);
+  ctx.translate(-(x + w / 2), -(y + h / 2));
+
+  ctx.font = '700 11px Impact, Arial Black, sans-serif';
+  const padX = 6;
   const tw = ctx.measureText(label).width;
   
-  ctx.fillStyle = 'rgba(12, 6, 22, 0.9)';
+  ctx.fillStyle = 'rgba(12, 6, 22, 0.95)';
   ctx.strokeStyle = '#e8c08a';
   ctx.lineWidth = 1.5;
-  ctx.fillRect(x + 12, y + h - 32, tw + padX * 2, 22);
-  ctx.strokeRect(x + 12, y + h - 32, tw + padX * 2, 22);
+  ctx.fillRect(x + 10, y + h - 28, tw + padX * 2, 20);
+  ctx.strokeRect(x + 10, y + h - 28, tw + padX * 2, 20);
 
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(label, x + 12 + padX, y + h - 17);
+  ctx.fillText(label, x + 10 + padX, y + h - 14);
   ctx.restore();
 }

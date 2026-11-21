@@ -50,7 +50,8 @@ function render() {
       x: pDef.x * width,
       y: pDef.y * height,
       w: pDef.w * width,
-      h: pDef.h * height
+      h: pDef.h * height,
+      angle: pDef.angle || 0
     };
     const transform = appState.transforms[idx] || { zoom: 1, offsetX: 0, offsetY: 0 };
     
@@ -61,10 +62,25 @@ function render() {
       ctx.fillRect(panel.x, panel.y, panel.w, panel.h);
     }
 
-    drawPanelBorder(ctx, panel.x, panel.y, panel.w, panel.h, pDef.angle);
+    // Apply optional per-panel treatment tint if specified
+    if (pDef.treatment === 'duotone1' || pDef.treatment === 'duotone2') {
+      ctx.save();
+      ctx.translate(panel.x + panel.w / 2, panel.y + panel.h / 2);
+      if (panel.angle) ctx.rotate(panel.angle);
+      ctx.translate(-(panel.x + panel.w / 2), -(panel.y + panel.h / 2));
+      ctx.beginPath();
+      ctx.rect(panel.x, panel.y, panel.w, panel.h);
+      ctx.clip();
+      ctx.fillStyle = pDef.treatment === 'duotone1' ? 'rgba(240, 90, 40, 0.18)' : 'rgba(100, 40, 150, 0.22)';
+      ctx.globalCompositeOperation = 'color';
+      ctx.fillRect(panel.x, panel.y, panel.w, panel.h);
+      ctx.restore();
+    }
+
+    drawPanelBorder(ctx, panel.x, panel.y, panel.w, panel.h, panel.angle);
 
     if (pDef.label) {
-      drawPanelLabel(ctx, panel.x, panel.y, panel.w, panel.h, pDef.label);
+      drawPanelLabel(ctx, panel.x, panel.y, panel.w, panel.h, panel.angle, pDef.label);
     }
   });
 
@@ -81,7 +97,7 @@ function render() {
 
 function init() {
   // Handle ?shot= params
-  handleShotParam(appState);
+  handleShotParam(appState, render);
 
   // Load default demo photo
   const img = new Image();
